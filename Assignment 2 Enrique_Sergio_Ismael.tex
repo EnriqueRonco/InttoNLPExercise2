@@ -244,8 +244,54 @@ P(z_{mn} = k) \propto \phi_k[w] \times \theta_m[k]
 \]
 for each word $w$ in document $m$.
 
+The probability of assigning each word \( w \) in document \( m \) to topic \( k \) is calculated as:
+\[
+P(z_{mn} = k) \propto \phi_k[w] \cdot \theta_m[k]
+\]
+
+For both topics (\( k = 1, 2 \)), and all words in the documents:
+\[
+\phi_k[w] = \frac{1}{3}, \quad \theta_m[k] = \frac{1}{2}
+\]
+Thus:
+\[
+P(z_{mn} = k) \propto \frac{1}{3} \cdot \frac{1}{2} = \frac{1}{6}
+\]
+
+\subsubsection*{Normalization of \( P(Z_{11} = k) \)}
+
+Given:
+\[
+P(Z_{11} = 1) \propto \frac{1}{6}, \quad P(Z_{11} = 2) \propto \frac{1}{6}
+\]
+
+The sum of unnormalized probabilities is:
+\[
+\text{Sum} = \frac{1}{6} + \frac{1}{6} = \frac{2}{6}
+\]
+
+Normalized probabilities:
+\[
+P(Z_{11} = 1) = \frac{\frac{1}{6}}{\frac{2}{6}} = \frac{1}{2}
+\]
+\[
+P(Z_{11} = 2) = \frac{\frac{1}{6}}{\frac{2}{6}} = \frac{1}{2}
+\]
+
+Thus, both probabilities are:
+\[
+P(Z_{11} = 1) = \frac{1}{2}, \quad P(Z_{11} = 2) = \frac{1}{2}
+\]
+The probabilities for all words are equal, so no preference exists between topics.
+
 \subsection*{2. Assign New Topics}
 Based on the probabilities computed earlier, assign a new topic to each word in each document. Assume you sample deterministically by choosing the topic with the higher probability.
+
+Since the probabilities are equal, we assign topics deterministically:
+\begin{itemize}
+    \item \textbf{Document 1:} Assign topic 1 to "apple" and topic 2 to "banana".
+    \item \textbf{Document 2:} Assign topic 1 to "banana" and topic 2 to "cherry".
+\end{itemize}
 
 \subsection*{3. Update Distributions}
 Update the $\phi_k$ and $\theta_m$ distributions based on the new topic assignments. Compute the new probabilities:
@@ -256,5 +302,56 @@ P(w|k) = \frac{C(w, k)}{\sum_{w'} C(w', k)}
 P(k|d) = \frac{C(k, d)}{\sum_{k'} C(k', d)}
 \]
 where $C(w, k)$ is the count of word $w$ assigned to topic $k$ across all documents, and $C(k, d)$ is the count of topic $k$ in document $d$.
+\textbf{Updated \( \phi_k \):}
+\[
+P(w|k) = \frac{C(w, k)}{\sum_{w'} C(w', k)}
+\]
+\[
+C(w, k):
+\begin{aligned}
+    &C(\text{apple}, 1) = 1, \quad C(\text{banana}, 1) = 1, \quad C(\text{cherry}, 1) = 0 \\
+    &C(\text{apple}, 2) = 0, \quad C(\text{banana}, 2) = 1, \quad C(\text{cherry}, 2) = 1
+\end{aligned}
+\]
+
+\[
+\phi_1 =
+\begin{bmatrix}
+\frac{1}{2} % apple
+\frac{1}{2} % banana
+0            % cherry
+\end{bmatrix}, \quad
+\phi_2 =
+\begin{bmatrix}
+0             % apple
+\frac{1}{2}  % banana
+\frac{1}{2}  % cherry
+\end{bmatrix}
+\]
+
+\textbf{Updated \( \theta_m \):}
+\[
+P(k|d) = \frac{C(k, d)}{\sum_{k'} C(k', d)}
+\]
+\[
+C(k, d):
+\begin{aligned}
+    &C(1, \text{Doc 1}) = 1, \quad C(2, \text{Doc 1}) = 1 \\
+    &C(1, \text{Doc 2}) = 1, \quad C(2, \text{Doc 2}) = 1
+\end{aligned}
+\]
+
+\[
+\theta_1 =
+\begin{bmatrix}
+\frac{1}{2}  % Topic 1
+\frac{1}{2}  % Topic 2
+\end{bmatrix}, \quad
+\theta_2 =
+\begin{bmatrix}
+\frac{1}{2}  % Topic 1
+\frac{1}{2}  % Topic 2
+\end{bmatrix}
+\]
 
 \end{document}
