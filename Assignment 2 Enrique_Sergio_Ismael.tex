@@ -1,0 +1,165 @@
+\documentclass{article}
+
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+\usepackage[utf8]{inputenc} % usually not needed (loaded by default)
+\usepackage[T1]{fontenc}
+\usepackage{verbatimbox}
+\usepackage{readarray}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{makeidx}
+\usepackage{index}
+\usepackage{hyperref}
+\usepackage{array}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=black,
+  citecolor=black
+}
+\makeindex
+
+% Margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\title{ Introduction to Natural Language Processing, Assignment 2 }
+\author{ Enrique Mesonero Ronco \and Sergio Sánchez García \and Ismael Cross Moreno }
+\date{\today}
+
+\begin{document}
+\maketitle
+\begin{figure}[h!]
+	\includegraphics[width=\linewidth]{C:/Users/Enrique/Desktop/Clases/Introduction to NLP/Ejercicio 2/Exercise2.png}
+\end{figure}
+\newpage
+\tableofcontents
+\newpage
+\section { Distributional Semantics }
+	\subsection { Raw Co-occurrence Vectors }
+Given the following raw co-occurrence counts of words with contexts jealous
+$(c_1)$ and gossip $(c_2)$:
+
+	\begin{center}
+	\begin{tabular} { | m{2cm} | m{2cm} | m{2cm} | }
+		\hline
+		 & $c_1 \text{(jealous)}$ &  $c_2 \text{(gossip)} $\\
+		\hline
+		$w_1$ & 2 & 5 \\
+		\hline
+		$w_2$ & 3 & 0 \\
+		\hline
+		$w_3$ & 4 & 0 \\
+		\hline
+		$w_4$ & 0 & 4 \\
+		\hline
+	\end{tabular}
+	\end{center}
+
+\begin{enumerate}
+    \item \textbf{Compute the TF-IDF Weighted Co-occurrence Matrix} \\
+    Use the following formulas:
+    \[
+    \text{tf}(w, c) = \log \left( \frac{\text{freq}(w, c)}{\max_{w'} \text{freq}(w', c)} + 1 \right)
+    \]
+    \[
+    \text{idf}(c) = \log \left( \frac{|V|}{|\{w \in V : \text{freq}(w, c) > 0\}|} \right)
+    \]
+    Where $|V| = 4$.
+    
+    \item \textbf{Represent Each Word as a TF-IDF Vector}
+    
+    \item \textbf{Compute the Euclidean Distance Between:}
+    \begin{enumerate}
+        \item $w_1$ and $w_2$
+        \item $w_2$ and $w_3$
+    \end{enumerate}
+    
+    \item \textbf{Discussion} \\
+    Based on the Euclidean distances computed, evaluate whether Euclidean distance is an appropriate measure for capturing the relationships between the words.
+\end{enumerate}
+	\subsection { Prediction Based Word Vectors }
+
+	\begin{itemize}
+		\item Why does Word2Vec use separate input vectors $(u_w)$ and output vectors
+$(v_w)$ for each word, and how does this benefit the model’s performance?
+		\item What are the primary differences between the Skip-Gram and Continuous
+Bag-of-Words (CBOW) models in Word2Vec, and in what scenarios might
+one outperform the other?
+		\item How does negative sampling improve the efficiency of training Word2Vec
+models compared to using the full softmax function?
+		\item How does the choice of window size in Word2Vec affect the type of semantic
+relationships the model captures?
+		\item What strategies canWord2Vec employ to handle out-of-vocabulary (OOV)
+words, and what are the implications of these strategies?
+	\end{itemize}
+
+\newpage
+\section { Topic Modeling }
+Consider a simple corpus with the following characteristics:
+
+\begin{itemize}
+    \item \textbf{Vocabulary (V)}: \{apple, banana, cherry\}
+    \item \textbf{Number of Topics (K)}: 2
+    \item \textbf{Number of Documents (M)}: 2
+\end{itemize}
+
+The initial topic distributions over words ($\phi_k$) and document distributions over topics ($\theta_m$) are randomly initialized as follows:
+
+\[
+\phi_1 =
+\begin{bmatrix}
+\frac{1}{3} \frac{1}{3} \frac{1}{3}
+\end{bmatrix}, \quad
+\phi_2 =
+\begin{bmatrix}
+\frac{1}{3} \frac{1}{3} \frac{1}{3}
+\end{bmatrix}
+\]
+
+\[
+\theta_1 =
+\begin{bmatrix}
+\frac{1}{2}  \frac{1}{2}
+\end{bmatrix}, \quad
+\theta_2 =
+\begin{bmatrix}
+\frac{1}{2} \frac{1}{2}
+\end{bmatrix}
+\]
+
+\subsection*{Documents}
+\begin{itemize}
+    \item \textbf{Document 1}: apple, banana
+    \item \textbf{Document 2}: banana, cherry
+\end{itemize}
+
+\section*{Steps to Solve}
+
+\subsection*{1. Compute Topic Assignment Probabilities}
+For each word in each document, compute the probability of assigning it to each topic using the current $\phi$ and $\theta$ values. Specifically, calculate:
+\[
+P(z_{mn} = k) \propto \phi_k[w] \times \theta_m[k]
+\]
+for each word $w$ in document $m$.
+
+\subsection*{2. Assign New Topics}
+Based on the probabilities computed earlier, assign a new topic to each word in each document. Assume you sample deterministically by choosing the topic with the higher probability.
+
+\subsection*{3. Update Distributions}
+Update the $\phi_k$ and $\theta_m$ distributions based on the new topic assignments. Compute the new probabilities:
+\[
+P(w|k) = \frac{C(w, k)}{\sum_{w'} C(w', k)}
+\]
+\[
+P(k|d) = \frac{C(k, d)}{\sum_{k'} C(k', d)}
+\]
+where $C(w, k)$ is the count of word $w$ assigned to topic $k$ across all documents, and $C(k, d)$ is the count of topic $k$ in document $d$.
+
+\end{document}
