@@ -13,6 +13,9 @@
 \usepackage{index}
 \usepackage{hyperref}
 \usepackage{array}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 \hypersetup{
   colorlinks=true,
   linkcolor=blue,
@@ -72,32 +75,124 @@ $(c_1)$ and gossip $(c_2)$:
     \text{idf}(c) = \log \left( \frac{|V|}{|\{w \in V : \text{freq}(w, c) > 0\}|} \right)
     \]
     Where $|V| = 4$.
-    
+\\
+
+    \textbf{TF:}
+	\begin{itemize}
+	\item $ \text{tf}(w_1, c_1) = \log \left( \frac{2}{4} + 1 \right)=0.176$
+	\item $ \text{tf}(w_2, c_1) = \log \left( \frac{3}{4} + 1 \right)=0.243$
+	\item $ \text{tf}(w_3, c_1) = \log \left( \frac{4}{4} + 1 \right)=0.301$
+	\item $ \text{tf}(w_4, c_1) = \log \left( \frac{0}{4} + 1 \right)=0$
+	\item $ \text{tf}(w_1, c_2) = \log \left( \frac{5}{5} + 1 \right)=0.301$
+	\item $ \text{tf}(w_2 c_2) = \log \left( \frac{0}{5} + 1 \right)=0$
+	\item $ \text{tf}(w_3, c_2) = \log \left( \frac{0}{5} + 1 \right)=0$
+	\item $ \text{tf}(w_4, c_2) = \log \left( \frac{4}{5} + 1 \right)=0.255$
+	\end{itemize}
+
+    \textbf{IDF:}
+	\begin{itemize}
+	\item $\text{idf}(c_1)=\log(\frac{4}{3})=0.125$
+	\item $\text{idf}(c_2)=\log(\frac{4}{2})=0.301$
+	\end{itemize}
+
+\textbf{TF-IDF}
+	\begin{itemize}
+	\item $ \text{tf-idf}(w_1, c_1) = 0.176 \cdot 0.125 = 0.022$
+	\item $ \text{tf-idf}(w_2, c_1) = 0.243 \cdot 0.125 = 0.030$
+	\item $ \text{tf-idf}(w_3, c_1) = 0.301 \cdot 0.125 = 0.0376$
+	\item $ \text{tf-idf}(w_4, c_1) = 0 \cdot 0.125 = 0$
+	\item $ \text{tf-idf}(w_1, c_2) = 0.301 \cdot 0.301 = 0.0906$
+	\item $ \text{tf-idf}(w_2, c_2) = 0 \cdot 0.301 = 0$
+	\item $ \text{tf-idf}(w_3, c_2) = 0 \cdot 0.301 = 0$
+	\item $ \text{tf-idf}(w_4, c_2) = 0.255 \cdot 0.301 = 0.077$
+	\end{itemize}
     \item \textbf{Represent Each Word as a TF-IDF Vector}
+
+\begin{tikzpicture}
+    \begin{axis}[
+        axis lines=middle,
+        xlabel={$c_1$},
+        ylabel={$c_2$},
+        xmin=0, xmax=0.05,
+        ymin=0, ymax=0.1,
+        xtick={0,0.01,0.02,0.03,0.04,0.05},
+        ytick={0,0.02,0.04,0.06,0.08,0.1},
+        grid=both,
+        width=10cm,
+        height=8cm,
+        legend style={at={(1.05,1)}, anchor=north west},
+    ]
     
+    % Vector w1
+    \addplot[->, thick, color=blue] coordinates {(0,0) (0.022,0.0906)};
+    \addlegendentry{$w_1 [0.022, 0.0906]$}
+    
+    % Vector w2
+    \addplot[->, thick, color=red] coordinates {(0,0) (0.030,0)};
+    \addlegendentry{$w_2 [0.030, 0]$}
+    
+    % Vector w3
+    \addplot[->, thick, color=green] coordinates {(0,0) (0.0376,0)};
+    \addlegendentry{$w_3 [0.0376, 0]$}
+    
+    % Vector w4
+    \addplot[->, thick, color=purple] coordinates {(0,0) (0,0.077)};
+    \addlegendentry{$w_4 [0, 0.077]$}
+    
+    \end{axis}
+\end{tikzpicture}
+
     \item \textbf{Compute the Euclidean Distance Between:}
+\[
+d(x,y) = \sqrt{\sum_{i=1}^n (x_i - y_i)^2}
+\]
+
     \begin{enumerate}
-        \item $w_1$ and $w_2$
-        \item $w_2$ and $w_3$
+        \item $w_1$ and $ w_2 \rightarrow 
+	d(w_1, w_2) = \sqrt{(0.022 - 0.030)^2 + (0.0906 - 0)^2} = 0.091$
+        \item $w_2 $ and $ w_3 \rightarrow
+	d(w_1, w_2) = \sqrt{(0.0307 - 0.0376)^2 + (0 - 0)^2} = 0.0076$
     \end{enumerate}
     
     \item \textbf{Discussion} \\
-    Based on the Euclidean distances computed, evaluate whether Euclidean distance is an appropriate measure for capturing the relationships between the words.
+    Based on the Euclidean distances computed, evaluate whether Euclidean distance is an appropriate measure for capturing the relationships between the words.\\
+	\textbf{Answer:} Is not a valid option because the Euclidean Distance is affected by vectors length.
 \end{enumerate}
 	\subsection { Prediction Based Word Vectors }
 
 	\begin{itemize}
 		\item Why does Word2Vec use separate input vectors $(u_w)$ and output vectors
-$(v_w)$ for each word, and how does this benefit the model’s performance?
+$(v_w)$ for each word, and how does this benefit the model’s performance?\\
+\textbf{Answer:} Two random vectors (of dimension $d << |V|$) assigned to each word:
+		\begin{itemize}
+			\item $u_w \rightarrow$ the "input" vector of the word $w$, when it is used to predict another word.
+			\item $v_w \rightarrow$ the "output" vector of the word $w$, when it is the one being predicted.
+		\end{itemize}
+
 		\item What are the primary differences between the Skip-Gram and Continuous
 Bag-of-Words (CBOW) models in Word2Vec, and in what scenarios might
-one outperform the other?
+one outperform the other?\\
+\textbf{Answer:}
+		\begin{itemize} 
+			\item Skip-Gram predicts each context words from the center word. More efficient with less amounts of data.
+		       	\item CBOW predicts the center word from the whole context. Faster, more efficient with big amounts of data.
+		\end{itemize}
+
 		\item How does negative sampling improve the efficiency of training Word2Vec
-models compared to using the full softmax function?
+models compared to using the full softmax function?\\
+\textbf{Answer:} Denominator in softmax sums over words in $V_N$, instead of the whole $V \rightarrow N<<|V|$
+
 		\item How does the choice of window size in Word2Vec affect the type of semantic
-relationships the model captures?
+relationships the model captures?\\
+\textbf{Answer:}
+		\begin{itemize}
+			\item Small windows $\rightarrow$ more sintactic relationships catched
+			\item Big windows $\rightarrow$ more semantic relationships catched
+		\end{itemize}
+
 		\item What strategies canWord2Vec employ to handle out-of-vocabulary (OOV)
-words, and what are the implications of these strategies?
+words, and what are the implications of these strategies?\\
+\textbf{Answer:} Tokenization: enrich word embeddings with subword information (low frequency "token" and "ization" more frequent). Learn subwords vectors (char n-grams) along with word-level embeddings.
 	\end{itemize}
 
 \newpage
